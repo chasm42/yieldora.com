@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Calculator</title>
+  <style>
+    body { font-family: sans-serif; max-width: 400px; margin: 50px auto; }
+    input { width: 100%; padding: 10px; margin: 5px 0; }
+    button { padding: 10px; width: 100%; }
+    .result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Loan Calculator</h1>
+  <input type="number" id="principal" placeholder="Loan Amount" required>
+  <input type="number" id="interest" placeholder="Interest Rate (%)" required>
+  <input type="number" id="years" placeholder="Years" required>
+  <button onclick="calculateLoan()">Calculate</button>
+  <div class="result" id="result"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

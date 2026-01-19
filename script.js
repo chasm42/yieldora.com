@@ -12,6 +12,8 @@ const padding = 56;
 let rawX = null;
 let targetX = null;
 let currentX = null;
+let lastSnappedYear = null;
+
 
 let autoCalcTimeout = null;
 
@@ -71,6 +73,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   requestAnimationFrame(animate);
   calculate();
+
+
+  let isInteracting = false;
+
+canvas.addEventListener("pointerdown", e => {
+  isInteracting = true;
+  canvas.setPointerCapture(e.pointerId);
+
+  const rect = canvas.getBoundingClientRect();
+  rawX = e.clientX - rect.left;
+  targetX = rawX;
+  currentX = rawX;
+});
+
+canvas.addEventListener("pointermove", e => {
+  if (!isInteracting) return;
+
+  const rect = canvas.getBoundingClientRect();
+  rawX = e.clientX - rect.left;
+  targetX = rawX;
+});
+
+canvas.addEventListener("pointerup", e => {
+  isInteracting = false;
+  canvas.releasePointerCapture(e.pointerId);
+});
+
+canvas.addEventListener("pointercancel", () => {
+  isInteracting = false;
+});
+
 });
 
 function scheduleCalculate() {
@@ -151,8 +184,10 @@ function calculate() {
       <span class="result-amount"><b>${formatMoneyExact(total)}</b></span>
     </div>
     <div class="result-breakdown">
-      <span>Principal & Contributions: ${formatMoneyExact(principalAndContrib)}</span>
-      <span>Growth: ${formatMoneyExact(growth)}</span>
+      <div><span>Principal & Contributions: ${formatMoneyExact(principalAndContrib)}</span></div>
+      
+      <div><span>Growth: ${formatMoneyExact(growth)}</span></div>
+
     </div>
   `;
 
@@ -267,57 +302,101 @@ function drawContributionLine(min, max) {
 /* ===============================
    CURSOR
 ================================ */
-
 function drawCursor() {
   if (!data.length || rawX === null) return;
 
   const rel = (rawX - padding) / plotWidth();
   if (rel < 0 || rel > 1) return;
 
-  const idx = rel * (data.length - 1);
-  const i0 = Math.floor(idx);
-  const i1 = Math.min(i0 + 1, data.length - 1);
-  const t = idx - i0;
+  /* ---------- SNAP TO YEAR ---------- */
+  const rawIndex = rel * (data.length - 1);
+  const snappedIndex = Math.round(rawIndex);
+  const year = Math.round(snappedIndex / 12 * 10)/10;
 
-  const totalValue = data[i0] * (1 - t) + data[i1] * t;
-  const contribValue = contributionData[i0] * (1 - t) + contributionData[i1] * t;
-  const growth = totalValue - contribValue;
-  const year = (idx / 12).toFixed(1);
+  /* ---------- HAPTIC FEEDBACK ---------- */
+  if (snappedIndex !== lastSnappedYear) {
+    lastSnappedYear = snappedIndex;
+
+    if (navigator.vibrate) {
+      navigator.vibrate(6); // subtle, premium
+    }
+  }
+
+  const totalValue = data[snappedIndex];
+  const contribValue = contributionData[snappedIndex];
+  const growthValue = totalValue - contribValue;
 
   const min = data[0] * 0.95;
   const max = Math.max(...data);
 
-  const px = padding + rel * plotWidth();
-  const py = mapY(totalValue, min, max);
+  const px =
+    padding +
+    (snappedIndex / (data.length - 1)) * plotWidth();
 
+  const py = mapY(totalValue, min, max);
   const dark = document.body.classList.contains("dark");
 
+  /* ---------- tracer ---------- */
   ctx.strokeStyle = dark ? "#9ca3af" : "#374151";
   ctx.beginPath();
   ctx.moveTo(px, padding);
   ctx.lineTo(px, canvasHeight() - padding);
   ctx.stroke();
 
-  const totalText = formatMoneySmart(totalValue);
-  const subText = `${formatMoneySmart(contribValue)} principal · ${formatMoneySmart(growth)} growth`;
+  /* ---------- tooltip content ---------- */
+  const lines = [
+    formatMoneySmart(totalValue),
+    `${formatMoneySmart(contribValue)} principal`,
+    `${formatMoneySmart(growthValue)} growth`,
+    `Year ${year}`
+  ];
 
   ctx.font = "15px Manrope, sans-serif";
-  const w = Math.max(ctx.measureText(totalText).width, ctx.measureText(subText).width) + 20;
 
-  const boxX = px > canvasWidth() - w - 12 ? px - w - 10 : px + 10;
-  const boxY = Math.max(py - 28, padding + 6);
+  const paddingX = 12;
+  const paddingY = 10;
+  const lineHeight = 18;
 
-  ctx.fillStyle = dark ? "rgba(15,23,42,0.75)" : "rgba(255,255,255,0.9)";
-  ctx.fillRect(boxX, boxY, w, 52);
+  const boxWidth =
+    Math.max(...lines.map(l => ctx.measureText(l).width)) +
+    paddingX * 2;
 
-  ctx.fillStyle = dark ? "#f5f7fa" : "#111827";
-  ctx.fillText(totalText, boxX + 10, boxY + 18);
+  const boxHeight =
+    lines.length * lineHeight + paddingY * 2;
 
-  ctx.font = "12px Manrope, sans-serif";
-  ctx.fillStyle = dark ? "#9ca3af" : "#6b7280";
-  ctx.fillText(subText, boxX + 10, boxY + 34);
-  ctx.fillText(`Year ${year}`, boxX + 10, boxY + 48);
+  /* ---------- smart positioning ---------- */
+  let boxX = px + 12;
+  if (boxX + boxWidth > canvasWidth() - 8) {
+    boxX = px - boxWidth - 12;
+  }
+
+  const boxY = Math.max(
+    py - boxHeight / 2,
+    padding + 6
+  );
+
+  /* ---------- box ---------- */
+  ctx.fillStyle = dark
+    ? "rgba(15,23,42,0.85)"
+    : "rgba(255,255,255,0.95)";
+  ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+  /* ---------- text ---------- */
+  lines.forEach((text, i) => {
+    ctx.font =
+      i === 0
+        ? "600 15px Manrope, sans-serif"
+        : "12px Manrope, sans-serif";
+
+    ctx.fillStyle = dark ? "#f5f7fa" : "#111827";
+    ctx.fillText(
+      text,
+      boxX + paddingX,
+      boxY + paddingY + (i + 1) * lineHeight - 6
+    );
+  });
 }
+
 
 /* ===============================
    HELPERS

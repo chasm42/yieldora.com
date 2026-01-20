@@ -1,3 +1,6 @@
+
+
+
 /* ===============================
    GLOBAL STATE
 ================================ */
@@ -16,6 +19,13 @@ let lastSnappedYear = null;
 
 
 let autoCalcTimeout = null;
+
+
+
+
+
+
+
 
 /* ===============================
    THEME
@@ -42,8 +52,76 @@ function toggleDark() {
    INIT
 ================================ */
 
+let supabaseClient;
 document.addEventListener("DOMContentLoaded", () => {
+
+
+  // ✅ Create client (NO name collision)
+supabaseClient = supabase.createClient(
+  "https://gdnofslwtaducxozegtb.supabase.co",
+  "sb_publishable_35Zc4aiUlnYro4BuvP8OXQ_qV3XWK2s"
+);
+
+// ---------- AUTH FUNCTIONS ----------
+
+async function signUp(email, password) {
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Check your email to confirm your account");
+  }
+}
+
+async function signIn(email, password) {
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+  }
+}
+
+// Magic link (NO password)
+async function signInWithMagicLink(email) {
+  const { error } = await supabaseClient.auth.signInWithOtp({
+    email
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Check your email for the login link");
+  }
+}
+
+window.signInWithMagicLink = signInWithMagicLink;
+
+// ---------- CHECK CURRENT USER ----------
+
+async function checkUser() {
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  if (user) {
+    console.log("Logged in:", user.email);
+  } else {
+    console.log("Not logged in");
+  }
+}
+
+// Call on page load
+checkUser();
+
   canvas = document.getElementById("growthChart");
+
   ctx = canvas.getContext("2d");
 
   resizeCanvas();
@@ -476,6 +554,13 @@ function clearCursor() {
 const menuBtn = document.getElementById("chartMenuBtn");
 const menu = document.getElementById("chartMenu");
 
+document.getElementById("chartMenuBtn").onclick = async () => {
+  const { data } = await supabaseClient.auth.getUser();
+  if (!data.user) {
+    openAuthModal();
+    return;
+  }
+
 menuBtn.onclick = () => {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
 };
@@ -484,6 +569,7 @@ document.addEventListener("click", e => {
   if (!menu.contains(e.target) && e.target !== menuBtn) {
     menu.style.display = "none";
   }
+
 });
 
 
@@ -520,7 +606,7 @@ function buildExportHTML() {
   return `
     <html>
     <head>
-      <title>Compound Interest Graph</title>
+      <title>Yieldora.ai - Compound Interest Graph</title>
       <style>
         body {
           font-family: system-ui, -apple-system, sans-serif;
@@ -533,7 +619,7 @@ function buildExportHTML() {
     <body>
       ${summaryHTML}
       ${inputHTML}
-      <img src="${chartImg}" style="width:100%;max-width:600px;margin-top:20px"/>
+      <img src="${chartImg}" style="width:100%;max-width:600px;margin-top:0px"/>
     </body>
     </html>
   `;
@@ -564,5 +650,38 @@ function exportChart(type) {
     };
   };
 }
+}
 
 
+const overlay = document.getElementById("auth-overlay");
+const emailInput = document.getElementById("auth-email");
+const magicBtn = document.getElementById("magic-link-btn");
+
+function openAuthModal() {
+  overlay.classList.remove("hidden");
+  emailInput.focus();
+}
+
+function closeAuthModal() {
+  overlay.classList.add("hidden");
+}
+
+overlay.addEventListener("click", e => {
+  if (e.target === overlay) closeAuthModal();
+});
+
+document.querySelector(".auth-close").onclick = closeAuthModal;
+
+magicBtn.onclick = async () => {
+  const email = emailInput.value.trim();
+  if (!email) return;
+
+  const { error } = await supabaseClient.auth.signInWithOtp({ email });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    magicBtn.textContent = "Check your email";
+    magicBtn.disabled = true;
+  }
+};

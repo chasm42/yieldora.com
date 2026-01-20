@@ -34,6 +34,10 @@
   </svg></span>
   <div class="logo">Yieldora.ai</div>
   </div>
+  <div class="header-right">
+    <span class="login-btn" onclick="openAuthModal()">
+  Log in
+</span>
   <span class="theme-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
     <svg class="sun-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="5" />
@@ -57,6 +61,8 @@
   <a href="/contact" class="app-item">Contact</a>
   -->
 </div>
+</div>
+
 </header>
 
 
@@ -143,9 +149,29 @@
 
   </div>
 </main>
+<div id="auth-overlay" class="auth-overlay hidden">
+  <div class="auth-modal" id="authModal">
+    <h2>Save your scenario</h2>
+    <p>Create a free account to save, compare, and export your projections.</p>
+
+    <input
+      type="email"
+      id="auth-email"
+      placeholder="Email address"
+      autocomplete="email"
+    />
+
+    <button id="magic-link-btn">Send magic link</button>
+
+    <span class="auth-close" aria-label="Close">×</span>
+  </div>
+</div>
+
 
 <script src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 </body>
 </html>

@@ -608,6 +608,13 @@ body.dark .menu-icon {
   gap: 12px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+
+}
+
 .app-menu {
   position: absolute;
   top: 56px;               /* just below header */
@@ -629,7 +636,7 @@ body.dark .menu-icon {
 }
 
 body.dark .app-menu {
-  background: rgba(15, 15, 15, 0.8);
+  background: #10161f;
 }
 
 .app-menu.open {
@@ -666,4 +673,119 @@ body.dark .app-item:hover {
 .app-menu.open {
   opacity: 3;
   transform: translateY(0);
+}
+
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.auth-overlay.hidden {
+  display: none;
+}
+
+.auth-modal {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+  animation: modalIn 0.25s ease;
+  position: relative;
+}
+
+body.dark .auth-modal {
+  background: #12161b;
+}
+
+.auth-modal h2 {
+  margin: 0 0 8px;
+}
+
+.auth-modal p {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-bottom: 16px;
+}
+
+.auth-modal input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+}
+
+.auth-modal button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#magic-link-btn {
+  background: #111827;
+  color: white;
+}
+
+body.dark #magic-link-btn {
+  background: white;
+  color: black;
+}
+
+.auth-close {
+  position: absolute;
+  top: 8px;
+  right: 22px;
+  background: none;
+  font-size: 28px;
+  opacity: 0.6;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+.login-btn {
+  appearance: none;
+  font-family: "Manrope";
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+  cursor: pointer;
+  transition: 
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Hover */
+.login-btn:hover {
+opacity: .55;
+}
+
+/* Active (press) */
+.login-btn:active {
+  opacity: 0.7;
+}
+
+/* Dark mode */
+.dark .login-btn {
+  color: #f5f7fa;
 }

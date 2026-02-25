@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yieldora</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    /* ── HOME-ONLY STYLES (not in style.css) ── */
+
+    .hero {
+      max-width: 860px; margin: 0 auto;
+      padding: 110px 20px 80px;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800; letter-spacing: -2.5px; line-height: 1.02;
+      color: var(--text); max-width: 680px;
+      opacity: 0; animation: heroUp 0.5s 0.05s ease forwards;
+    }
+    .hero h1 span { color: #16a34a; }
+    .hero p {
+      margin-top: 22px; font-size: 17px; font-weight: 400;
+      color: var(--muted); line-height: 1.65; max-width: 380px;
+      opacity: 0; animation: heroUp 0.5s 0.15s ease forwards;
+    }
+    .hero-cta {
+      margin-top: 36px;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #16a34a; color: #fff;
+      font-family: "Manrope", sans-serif; font-size: 15px; font-weight: 700;
+      padding: 13px 26px; border-radius: 12px;
+      text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(22,163,74,0.25);
+      transition: filter 0.15s, transform 0.15s;
+      opacity: 0; animation: heroUp 0.5s 0.25s ease forwards;
+      width: auto;
+    }
+    .hero-cta:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: none; }
+    .hero-cta svg { transition: transform 0.2s; }
+    .hero-cta:hover svg { transform: translateX(3px); }
+
+    @keyframes heroUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .home-divider { border: none; border-top: 1px solid var(--border); }
+
+    /* LIVE CALC STRIP */
+    .calc-strip {
+      max-width: 860px; margin: 0 auto;
+      padding: 52px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 0 48px;
+      align-items: center;
+    }
+    .calc-strip-divider { background: var(--border); width: 1px; height: 100%; }
+
+    .calc-inputs { display: flex; flex-direction: column; gap: 28px; }
+    .calc-row-label {
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .calc-row-val {
+      font-size: 28px; font-weight: 800; letter-spacing: -0.8px;
+      color: var(--text); line-height: 1; margin-bottom: 12px;
+    }
+    .calc-rate-note { font-size: 12px; color: var(--muted); }
+
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 2px;
+      background: var(--border); border-radius: 2px;
+      outline: none; border: none; padding: 0; margin: 0; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #16a34a;
+      box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px #16a34a;
+      cursor: pointer; transition: transform 0.1s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #16a34a; border: none;
+      box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px #16a34a;
+      cursor: pointer;
+    }
+
+    .calc-result { display: flex; flex-direction: column; gap: 6px; }
+    .calc-result-label {
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .calc-result-num {
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 800; letter-spacing: -2px; line-height: 1;
+      color: #16a34a; font-variant-numeric: tabular-nums;
+    }
+    .calc-result-gain { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .calc-result-gain span { color: #16a34a; font-weight: 700; }
+    .calc-result-cta {
+      margin-top: 20px; font-size: 13px; font-weight: 600;
+      color: #16a34a; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: gap 0.2s; width: auto; background: none;
+      border: none; padding: 0; box-shadow: none; border-radius: 0;
+    }
+    .calc-result-cta:hover { gap: 9px; transform: none; box-shadow: none; background: none; }
+
+    /* BROKERS */
+    .brokers {
+      max-width: 860px; margin: 0 auto;
+      padding: 72px 20px;
+    }
+    .brokers-hed { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 22px; }
+    .brokers-hed a { color: var(--muted); text-underline-offset: 3px; }
+
+    .broker-grid {
+      display: grid; grid-template-columns: repeat(2,1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .broker-card {
+      background: var(--card);
+      padding: 24px; display: flex; flex-direction: column; gap: 12px;
+      position: relative; overflow: hidden; transition: background 0.15s;
+    }
+    .broker-card:hover { background: #fafafa; transform: none; box-shadow: none; }
+    body.dark .broker-card:hover { background: #161b23; }
+
+    .broker-tag {
+      position: absolute; top: 0; right: 0;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 4px 11px; border-bottom-left-radius: 9px;
+    }
+    .t-green  { background: #f0fdf4; color: #15803d; }
+    .t-blue   { background: #eff6ff; color: #1d4ed8; }
+    .t-amber  { background: #fffbeb; color: #b45309; }
+    .t-purple { background: #fdf4ff; color: #7e22ce; }
+    body.dark .t-green  { background: rgba(22,163,74,0.15);  color: #4ade80; }
+    body.dark .t-blue   { background: rgba(37,99,235,0.15);  color: #93c5fd; }
+    body.dark .t-amber  { background: rgba(180,83,9,0.15);   color: #fcd34d; }
+    body.dark .t-purple { background: rgba(124,58,237,0.15); color: #c4b5fd; }
+
+    .broker-top { display: flex; align-items: center; gap: 10px; }
+    .broker-logo {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800;
+    }
+    .l-green  { background: #dcfce7; color: #166534; }
+    .l-blue   { background: #dbeafe; color: #1e40af; }
+    .l-orange { background: #ffedd5; color: #9a3412; }
+    .l-purple { background: #ede9fe; color: #5b21b6; }
+    body.dark .l-green  { background: rgba(22,163,74,0.15); color: #4ade80; }
+    body.dark .l-blue   { background: rgba(37,99,235,0.15); color: #93c5fd; }
+    body.dark .l-orange { background: rgba(234,88,12,0.15); color: #fb923c; }
+    body.dark .l-purple { background: rgba(124,58,237,0.15);color: #c4b5fd; }
+
+    .broker-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .broker-sub  { font-size: 12px; color: var(--muted); }
+    .broker-perks { list-style: none; }
+    .broker-perks li { font-size: 13px; color: var(--muted); padding: 3px 0; display: flex; gap: 8px; }
+    .broker-perks li::before { content: '—'; color: #16a34a; flex-shrink: 0; }
+    .broker-bonus {
+      font-size: 12.5px; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; background: var(--bg);
+    }
+    .broker-bonus strong { color: var(--text); font-weight: 600; }
+    .broker-btn {
+      display: block; text-align: center; padding: 10px; border-radius: 9px;
+      font-size: 13px; font-weight: 700; text-decoration: none; color: #fff;
+      border: none; cursor: pointer; transition: filter 0.15s, transform 0.15s;
+      width: 100%;
+    }
+    .broker-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: none; }
+    .b-green  { background: #16a34a; }
+    .b-blue   { background: #2563eb; }
+    .b-orange { background: #ea580c; }
+    .b-purple { background: #7c3aed; }
+    .broker-fine { font-size: 10.5px; color: var(--muted); text-align: center; opacity: 0.7; }
+
+    .disclosure {
+      margin-top: 20px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11.5px; color: var(--muted); line-height: 1.7;
+    }
+    .disclosure a { color: var(--muted); text-underline-offset: 3px; }
+
+    /* FOOTER */
+    .home-footer { border-top: 1px solid var(--border); padding: 24px 20px; }
+    .home-footer-inner {
+      max-width: 860px; margin: 0 auto;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+    .footer-copy  { font-size: 12px; color: var(--muted); }
+    .footer-legal { font-size: 11px; color: var(--muted); max-width: 400px; line-height: 1.6; text-align: right; }
+
+    @media (max-width: 640px) {
+      .calc-strip { grid-template-columns: 1fr; gap: 40px; }
+      .calc-strip-divider { display: none; }
+    }
+    @media (max-width: 680px) {
+      .broker-grid { grid-template-columns: 1fr; }
+      .footer-legal { text-align: left; max-width: 100%; }
+    }
+    @media (max-width: 400px) {
+      .hero h1 { letter-spacing: -1.5px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER — identical structure to your calculator page -->
+<header class="site-header">
+  <div class="header-left">
+    <span class="menu-btn" aria-label="Menu">
+      <svg class="theme-toggle" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="3" y="3" width="4" height="4" rx="1"/>
+        <rect x="10" y="3" width="4" height="4" rx="1"/>
+        <rect x="17" y="3" width="4" height="4" rx="1"/>
+        <rect x="3" y="10" width="4" height="4" rx="1"/>
+        <rect x="10" y="10" width="4" height="4" rx="1"/>
+        <rect x="17" y="10" width="4" height="4" rx="1"/>
+        <rect x="3" y="17" width="4" height="4" rx="1"/>
+        <rect x="10" y="17" width="4" height="4" rx="1"/>
+        <rect x="17" y="17" width="4" height="4" rx="1"/>
+      </svg>
+    </span>
+    <div class="logo">Yieldora</div>
+  </div>
+  <div class="header-right">
+    <span class="theme-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
+      <svg class="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="5"/>
+        <g stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="1" x2="12" y2="4"/>
+          <line x1="12" y1="20" x2="12" y2="23"/>
+          <line x1="1" y1="12" x2="4" y2="12"/>
+          <line x1="20" y1="12" x2="23" y2="12"/>
+          <line x1="4.6" y1="4.6" x2="6.8" y2="6.8"/>
+          <line x1="17.2" y1="17.2" x2="19.4" y2="19.4"/>
+          <line x1="17.2" y1="6.8" x2="19.4" y2="4.6"/>
+          <line x1="4.6" y1="19.4" x2="6.8" y2="17.2"/>
+        </g>
+      </svg>
+    </span>
+    <div class="app-menu" id="appMenu" aria-hidden="true">
+      <a href="/home/" class="app-item">Home</a>
+      <a href="/" class="app-item">Calculator</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Your money should<br/>be working <span>harder.</span></h1>
+  <p>Free compound interest calculator. See exactly where your investments end up — no sign-up, no fluff.</p>
+  <a href="/" class="hero-cta">
+    Open Calculator
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
+
+<hr class="home-divider" />
+
+<!-- LIVE CALC STRIP -->
+<div class="calc-strip">
+  <div class="calc-inputs">
+    <div>
+      <div class="calc-row-label">Starting amount</div>
+      <div class="calc-row-val" id="labelAmount">$10,000</div>
+      <input type="range" id="sliderAmount" min="1000" max="100000" step="1000" value="10000" oninput="homeUpdate()" />
+    </div>
+    <div>
+      <div class="calc-row-label">Time horizon</div>
+      <div class="calc-row-val" id="labelYears">20 years</div>
+      <input type="range" id="sliderYears" min="1" max="40" step="1" value="20" oninput="homeUpdate()" />
+    </div>
+    <div class="calc-rate-note">at 7% annually, monthly compounding</div>
+  </div>
+
+  <div class="calc-strip-divider"></div>
+
+  <div class="calc-result">
+    <div class="calc-result-label">You'd end up with</div>
+    <div class="calc-result-num" id="resultNum">$38,697</div>
+    <div class="calc-result-gain">including <span id="resultGain">$28,697</span> in interest</div>
+    <a href="/" class="calc-result-cta">
+      Model your numbers
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</div>
+
+<hr class="home-divider" />
+
+<!-- BROKERS -->
+<div class="brokers">
+  <div class="brokers-hed">Recommended brokers — we may earn a commission at no cost to you. <a href="#">Disclosure ›</a></div>
+  <div class="broker-grid">
+
+    <div class="broker-card">
+      <span class="broker-tag t-green">Best overall</span>
+      <div class="broker-top">
+        <div class="broker-logo l-green">F</div>
+        <div><div class="broker-name">Fidelity</div><div class="broker-sub">Full-service investing</div></div>
+      </div>
+      <ul class="broker-perks">
+        <li>$0 commissions on stocks & ETFs</li>
+        <li>Fractional shares from $1</li>
+        <li>No account minimums</li>
+      </ul>
+      <div class="broker-bonus"><strong>Bonus:</strong> $100 when you fund with $50+</div>
+      <a href="#" class="broker-btn b-green">Open a Fidelity Account →</a>
+      <div class="broker-fine">Sponsored · Terms apply</div>
+    </div>
+
+    <div class="broker-card">
+      <span class="broker-tag t-blue">Best for beginners</span>
+      <div class="broker-top">
+        <div class="broker-logo l-blue">R</div>
+        <div><div class="broker-name">Robinhood</div><div class="broker-sub">Simple, mobile-first</div></div>
+      </div>
+      <ul class="broker-perks">
+        <li>Instant deposits up to $1,000</li>
+        <li>Crypto & options trading</li>
+        <li>IRA with 3% match (Gold)</li>
+      </ul>
+      <div class="broker-bonus"><strong>Bonus:</strong> 1 free stock up to $200</div>
+      <a href="#" class="broker-btn b-blue">Claim Your Free Stock →</a>
+      <div class="broker-fine">Sponsored · Terms apply</div>
+    </div>
+
+    <div class="broker-card">
+      <span class="broker-tag t-amber">Best for traders</span>
+      <div class="broker-top">
+        <div class="broker-logo l-orange">T</div>
+        <div><div class="broker-name">Tastytrade</div><div class="broker-sub">Built for options</div></div>
+      </div>
+      <ul class="broker-perks">
+        <li>$0 stock commissions</li>
+        <li>$1 to open, $0 to close options</li>
+        <li>Advanced charting & analytics</li>
+      </ul>
+      <div class="broker-bonus"><strong>Bonus:</strong> Up to $500 on asset transfer</div>
+      <a href="#" class="broker-btn b-orange">Start Trading Options →</a>
+      <div class="broker-fine">Sponsored · Terms apply</div>
+    </div>
+
+    <div class="broker-card">
+      <span class="broker-tag t-purple">Best long-term</span>
+      <div class="broker-top">
+        <div class="broker-logo l-purple">V</div>
+        <div><div class="broker-name">Vanguard</div><div class="broker-sub">Index funds & retirement</div></div>
+      </div>
+      <ul class="broker-perks">
+        <li>Industry-lowest expense ratios</li>
+        <li>401k rollovers made simple</li>
+        <li>Investor-owned structure</li>
+      </ul>
+      <div class="broker-bonus"><strong>Bonus:</strong> $0 commissions on Vanguard ETFs</div>
+      <a href="#" class="broker-btn b-purple">Open a Vanguard Account →</a>
+      <div class="broker-fine">Sponsored · Terms apply</div>
+    </div>
+
+  </div>
+  <p class="disclosure">
+    <strong>Advertiser Disclosure:</strong> Yieldora may receive compensation when you click links to financial products. This does not affect our calculator accuracy or editorial independence. Bonus offers subject to broker terms. Rates current February 2026.
+  </p>
+</div>
+
+<!-- FOOTER -->
+<footer class="home-footer">
+  <div class="home-footer-inner">
+    <div class="footer-copy">© 2026 Yieldora</div>
+    <div class="footer-legal">For educational purposes only. Not financial advice. Projections are estimates, not guarantees.</div>
+  </div>
+</footer>
+
+<!-- script.js last, same as your calculator page -->
+<script>
+  function homeUpdate() {
+    const p = +document.getElementById('sliderAmount').value;
+    const t = +document.getElementById('sliderYears').value;
+    const result = p * Math.pow(1 + 0.07 / 12, 12 * t);
+    const gain = result - p;
+    const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+    document.getElementById('labelAmount').textContent = fmt(p);
+    document.getElementById('labelYears').textContent = t + (t === 1 ? ' year' : ' years');
+    document.getElementById('resultNum').textContent = fmt(result);
+    document.getElementById('resultGain').textContent = fmt(gain);
+  }
+</script>
+<script src="../script.js"></script>
+</body>
+</html>

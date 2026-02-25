@@ -5,227 +5,980 @@
   <title>Yieldora - Compound Interest Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" crossorigin="anonymous"></script>
 
-  <script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-  crossorigin="anonymous">
-</script>
+  <style>
+    /* ══════════════════════════════════════════
+       TRUST BAR
+    ══════════════════════════════════════════ */
+    .trust-bar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .trust-item svg { stroke: #16a34a; fill: none; flex-shrink: 0; }
 
+    /* ══════════════════════════════════════════
+       SHARED WRAPPER
+    ══════════════════════════════════════════ */
+    .content-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       EDITORIAL — ACCORDION SECTIONS
+    ══════════════════════════════════════════ */
+    .editorial {
+      padding: 40px 0 32px;
+    }
+
+    .editorial-intro {
+      margin-bottom: 28px;
+    }
+    .editorial-intro h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 6px;
+      letter-spacing: -0.3px;
+    }
+    .editorial-intro p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Accordion container */
+    .ed-accordion {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* Each accordion item */
+    .ed-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .ed-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Accordion trigger button */
+    .ed-trigger {
+      width: 100% !important;
+      background: var(--card) !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 18px 20px !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s !important;
+    }
+    .ed-trigger:hover {
+      background: var(--bg) !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    .ed-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ed-trigger-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .ed-trigger-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .ed-trigger-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 1px;
+    }
+    .ed-chevron {
+      width: 18px; height: 18px;
+      stroke: var(--muted);
+      fill: none;
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+    .ed-item.open .ed-chevron {
+      transform: rotate(180deg);
+    }
+    /* Open trigger gets a subtle left accent */
+    .ed-item.open .ed-trigger {
+      background: var(--bg) !important;
+      border-left: 3px solid #16a34a !important;
+      padding-left: 17px !important;
+    }
+
+    /* Collapsible body */
+    .ed-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      background: var(--bg);
+    }
+    .ed-item.open .ed-body {
+      max-height: 2000px;
+    }
+    .ed-body-inner {
+      padding: 4px 20px 24px;
+    }
+
+    /* ── Content styles inside accordion ── */
+    .ed-body-inner p {
+      font-size: 14.5px;
+      line-height: 1.75;
+      color: var(--text);
+      margin: 0 0 12px;
+    }
+    .ed-body-inner p:last-child { margin-bottom: 0; }
+
+    .ed-callout {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid #16a34a;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+
+    /* Stat cards */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .stat-number { font-size: 22px; font-weight: 800; color: #16a34a; letter-spacing: -0.5px; line-height: 1; margin-bottom: 5px; }
+    .stat-label  { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+
+    /* Formula */
+    .formula-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 16px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .formula-main { font-size: 19px; font-weight: 700; color: var(--text); margin-bottom: 14px; font-family: 'Georgia', serif; }
+    .formula-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; }
+    .formula-item { font-size: 12.5px; color: var(--muted); display: flex; gap: 5px; align-items: center; }
+    .formula-var  { font-weight: 700; color: var(--text); font-family: 'Georgia', serif; }
+
+    /* Tables */
+    .ed-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: var(--card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    .ed-table thead { background: var(--card); border-bottom: 1px solid var(--border); }
+    .ed-table th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+    .ed-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .ed-table tr:last-child td { border-bottom: none; }
+    .ed-table .highlight { color: #16a34a; font-weight: 700; }
+
+    /* Tips */
+    .tips-list { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; gap: 12px; }
+    .tips-list li { display: flex; gap: 12px; align-items: flex-start; }
+    .tip-icon  { width: 34px; height: 34px; border-radius: 9px; background: rgba(22,163,74,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+    .tip-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .tip-text  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+    /* FAQ inner accordion */
+    .faq-list { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 12px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-question {
+      width: 100% !important; background: var(--card) !important; border: none !important;
+      border-radius: 0 !important; box-shadow: none !important;
+      padding: 13px 16px !important; text-align: left;
+      font-size: 14px; font-weight: 600; color: var(--text) !important;
+      cursor: pointer; display: flex !important; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .faq-question:hover { background: var(--bg) !important; transform: none !important; box-shadow: none !important; }
+    .faq-chevron { width: 16px; height: 16px; stroke: var(--muted); fill: none; flex-shrink: 0; transition: transform 0.2s ease; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: var(--bg); }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .faq-answer-inner { padding: 4px 16px 14px; font-size: 13.5px; line-height: 1.7; color: var(--muted); }
+
+    /* Steps */
+    .steps-list { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; }
+    .step-item { display: flex; gap: 14px; padding-bottom: 20px; }
+    .step-item:last-child { padding-bottom: 0; }
+    .step-left { display: flex; flex-direction: column; align-items: center; }
+    .step-num  { width: 28px; height: 28px; border-radius: 50%; background: #16a34a; color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-line { width: 2px; flex: 1; background: var(--border); margin-top: 5px; }
+    .step-item:last-child .step-line { display: none; }
+    .step-content { flex: 1; padding-top: 3px; }
+    .step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .step-text  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* ══════════════════════════════════════════
+       AFFILIATE SECTION
+    ══════════════════════════════════════════ */
+    .affiliate-section { padding: 40px 0 48px; }
+    .affiliate-header h2 { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin: 0 0 6px; }
+    .affiliate-header h2 em { font-style: italic; color: #16a34a; }
+    .affiliate-subtext { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .affiliate-subtext a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+
+    .broker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+
+    .broker-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 12px;
+      transition: box-shadow 0.2s, transform 0.2s; position: relative; overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    .broker-card:hover { box-shadow: 0 8px 24px var(--shadow); transform: translateY(-2px); }
+
+    .broker-badge { position: absolute; top: 0; right: 0; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; padding: 4px 10px; border-bottom-left-radius: 9px; text-transform: uppercase; }
+    .broker-badge.green  { background: #f0fdf4; color: #15803d; }
+    .broker-badge.blue   { background: #eff6ff; color: #1d4ed8; }
+    .broker-badge.amber  { background: #fffbeb; color: #b45309; }
+    .broker-badge.purple { background: #fdf4ff; color: #7e22ce; }
+    body.dark .broker-badge.green  { background: rgba(22,163,74,0.15);  color: #4ade80; }
+    body.dark .broker-badge.blue   { background: rgba(29,78,216,0.18);  color: #93c5fd; }
+    body.dark .broker-badge.amber  { background: rgba(180,83,9,0.18);   color: #fcd34d; }
+    body.dark .broker-badge.purple { background: rgba(124,58,237,0.18); color: #c4b5fd; }
+
+    .broker-identity { display: flex; align-items: center; gap: 10px; }
+    .broker-logo { width: 40px; height: 40px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; flex-shrink: 0; }
+    .logo-green  { background: #dcfce7; color: #166534; }
+    .logo-blue   { background: #dbeafe; color: #1e40af; }
+    .logo-orange { background: #ffedd5; color: #9a3412; }
+    .logo-purple { background: #ede9fe; color: #5b21b6; }
+    body.dark .logo-green  { background: rgba(22,163,74,0.18);  color: #4ade80; }
+    body.dark .logo-blue   { background: rgba(29,78,216,0.2);   color: #93c5fd; }
+    body.dark .logo-orange { background: rgba(234,88,12,0.18);  color: #fb923c; }
+    body.dark .logo-purple { background: rgba(124,58,237,0.18); color: #c4b5fd; }
+
+    .broker-name    { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .broker-tagline { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .broker-rating  { display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--text); }
+    .stars        { color: #f59e0b; font-size: 12px; }
+    .rating-count { font-weight: 400; color: var(--muted); font-size: 11.5px; }
+
+    .broker-perks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+    .broker-perks li { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; color: var(--text); line-height: 1.4; }
+    .perk-check { width: 15px; height: 15px; background: rgba(22,163,74,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .perk-check svg { stroke: #16a34a; fill: none; }
+
+    .broker-bonus { background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 8px 10px; font-size: 12.5px; color: var(--text); line-height: 1.4; }
+
+    .broker-cta {
+      display: block !important; width: auto !important; text-align: center;
+      padding: 10px 14px !important; border-radius: 9px !important;
+      font-size: 13.5px !important; font-weight: 700 !important;
+      text-decoration: none; color: #fff !important;
+      border: none !important; box-shadow: none !important;
+      transition: filter 0.15s, transform 0.15s !important;
+      margin-top: auto; cursor: pointer;
+    }
+    .broker-cta:hover { filter: brightness(1.1) !important; transform: translateY(-1px) !important; }
+    .cta-green  { background: #16a34a !important; }
+    .cta-blue   { background: #2563eb !important; }
+    .cta-orange { background: #ea580c !important; }
+    .cta-purple { background: #7c3aed !important; }
+
+    .broker-disclaimer { font-size: 11px; color: var(--muted); text-align: center; }
+
+    .compare-wrap { margin-top: 32px; }
+    .compare-wrap h3 { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
+    /* Scrollable table wrapper on mobile */
+    .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); min-width: 480px; }
+    .compare-table thead { background: var(--bg); border-bottom: 1px solid var(--border); }
+    .compare-table th { padding: 10px 14px; text-align: left; font-weight: 700; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .compare-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--bg); }
+    .compare-table .broker-col { font-weight: 700; }
+
+    .pill-yes { background: rgba(22,163,74,0.12); color: #16a34a; border-radius: 20px; padding: 2px 8px; font-size: 11.5px; font-weight: 600; }
+    body.dark .pill-yes { background: rgba(22,163,74,0.2); color: #4ade80; }
+    .pill-no  { background: var(--bg); color: var(--muted); border-radius: 20px; padding: 2px 8px; font-size: 11.5px; }
+
+    .table-cta {
+      display: inline-block !important; padding: 5px 12px !important; border-radius: 7px !important;
+      font-size: 12px !important; font-weight: 700 !important; text-decoration: none;
+      color: var(--text) !important; background: var(--bg) !important;
+      border: 1px solid var(--border) !important; box-shadow: none !important;
+      width: auto !important;
+    }
+    .table-cta:hover { opacity: 0.7; transform: none !important; }
+
+    .affiliate-fine-print { margin-top: 24px; padding-top: 16px; font-size: 11px; color: var(--muted); line-height: 1.7; border-top: 1px solid var(--border); }
+
+    /* ══════════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .trust-bar { gap: 10px 16px; padding: 8px 12px; }
+      .trust-item { font-size: 11.5px; }
+
+      .editorial { padding: 28px 0 24px; }
+      .editorial-intro h2 { font-size: 18px; }
+
+      .ed-trigger { padding: 15px 16px !important; }
+      .ed-trigger-text { font-size: 14px; }
+      .ed-body-inner { padding: 4px 16px 20px; }
+
+      .stat-row { grid-template-columns: 1fr; gap: 8px; }
+      .stat-number { font-size: 20px; }
+
+      .formula-main { font-size: 17px; }
+
+      .ed-table th, .ed-table td { padding: 8px 10px; font-size: 12px; }
+
+      .affiliate-section { padding: 28px 0 36px; }
+      .broker-grid { grid-template-columns: 1fr; gap: 10px; }
+
+      .compare-wrap h3 { font-size: 15px; }
+    }
+
+    @media (max-width: 400px) {
+      .content-wrapper { padding: 0 12px; }
+      .trust-item:nth-child(n+3) { display: none; } /* show only 2 on tiny screens */
+    }
+  </style>
 </head>
+
+<body>
 
 <!-- HEADER -->
 <header class="site-header">
   <div class="header-left">
-  <span class="menu-btn" aria-label="Menu">
-<svg
-    class="theme-toggle"
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <rect x="3" y="3" width="4" height="4" rx="1"/>
-    <rect x="10" y="3" width="4" height="4" rx="1"/>
-    <rect x="17" y="3" width="4" height="4" rx="1"/>
-
-    <rect x="3" y="10" width="4" height="4" rx="1"/>
-    <rect x="10" y="10" width="4" height="4" rx="1"/>
-    <rect x="17" y="10" width="4" height="4" rx="1"/>
-
-    <rect x="3" y="17" width="4" height="4" rx="1"/>
-    <rect x="10" y="17" width="4" height="4" rx="1"/>
-    <rect x="17" y="17" width="4" height="4" rx="1"/>
-  </svg></span>
-  <div class="logo">Yieldora</div>
+    <span class="menu-btn" aria-label="Menu">
+      <svg class="theme-toggle" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="3" y="3" width="4" height="4" rx="1"/>
+        <rect x="10" y="3" width="4" height="4" rx="1"/>
+        <rect x="17" y="3" width="4" height="4" rx="1"/>
+        <rect x="3" y="10" width="4" height="4" rx="1"/>
+        <rect x="10" y="10" width="4" height="4" rx="1"/>
+        <rect x="17" y="10" width="4" height="4" rx="1"/>
+        <rect x="3" y="17" width="4" height="4" rx="1"/>
+        <rect x="10" y="17" width="4" height="4" rx="1"/>
+        <rect x="17" y="17" width="4" height="4" rx="1"/>
+      </svg>
+    </span>
+    <div class="logo">Yieldora</div>
   </div>
   <div class="header-right">
-    <!---
-    <span class="login-btn" onclick="openAuthModal()">
-  Log in
-</span>
--->
-  <span class="theme-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
-    <svg class="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="5" />
-      <g stroke-width="2" stroke-linecap="round">
-        <line x1="12" y1="1" x2="12" y2="4"/>
-        <line x1="12" y1="20" x2="12" y2="23"/>
-        <line x1="1" y1="12" x2="4" y2="12"/>
-        <line x1="20" y1="12" x2="23" y2="12"/>
-        <line x1="4.6" y1="4.6" x2="6.8" y2="6.8"/>
-        <line x1="17.2" y1="17.2" x2="19.4" y2="19.4"/>
-        <line x1="17.2" y1="6.8" x2="19.4" y2="4.6"/>
-        <line x1="4.6" y1="19.4" x2="6.8" y2="17.2"/>
-      </g>
-    </svg>
-  </span>
-  <div class="app-menu" id="appMenu" aria-hidden="true">
-  <a href="/" class="app-item">Calculator</a>
-  <!----
-  <a href="/about" class="app-item">About</a>
-  <a href="/privacy" class="app-item">Privacy</a>
-  <a href="/contact" class="app-item">Contact</a>
-  -->
-</div>
-</div>
-
+    <span class="theme-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
+      <svg class="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="5"/>
+        <g stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="1" x2="12" y2="4"/>
+          <line x1="12" y1="20" x2="12" y2="23"/>
+          <line x1="1" y1="12" x2="4" y2="12"/>
+          <line x1="20" y1="12" x2="23" y2="12"/>
+          <line x1="4.6" y1="4.6" x2="6.8" y2="6.8"/>
+          <line x1="17.2" y1="17.2" x2="19.4" y2="19.4"/>
+          <line x1="17.2" y1="6.8" x2="19.4" y2="4.6"/>
+          <line x1="4.6" y1="19.4" x2="6.8" y2="17.2"/>
+        </g>
+      </svg>
+    </span>
+    <div class="app-menu" id="appMenu" aria-hidden="true">
+      <a href="/home/" class="app-item">Home</a>
+      <a href="/" class="app-item">Calculator</a>
+    </div>
+  </div>
 </header>
 
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Unbiased projections
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    No account required
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Updated rates weekly
+  </div>
+  <div class="trust-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Trusted by 50,000+ investors
+  </div>
+</div>
 
-<body>
-<!-- PAGE -->
+<!-- ════════════════════════════════════════
+     EDITORIAL — BEFORE CALCULATOR
+════════════════════════════════════════ -->
+<div class="content-wrapper">
+  <div class="editorial">
+
+    <div class="editorial-intro">
+      <h2>Compound Interest Calculator</h2>
+      <p>Learn how compound interest works, then use the calculator below to model your own investments.</p>
+    </div>
+
+    <div class="ed-accordion">
+
+      <!-- 1. What is compound interest — OPEN by default -->
+      <div class="ed-item open">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">📈</span>
+            <div>
+              <div class="ed-trigger-text">What is compound interest?</div>
+              <div class="ed-trigger-sub">The basics and why it matters</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <p>Compound interest is interest calculated on both your original principal <em>and</em> the interest you've already earned. Your interest earns interest — and that snowball effect is what makes it so powerful over time.</p>
+
+            <div class="ed-callout">
+              <strong>Example:</strong> You invest $10,000 at 7%. After year one you earn $700, reaching $10,700. In year two, you earn 7% on $10,700 — not just the original $10,000. Small at first, enormous over decades.
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-card">
+                <div class="stat-number">$76,122</div>
+                <div class="stat-label">$10k @ 7% · 30 yrs<br/><strong>with</strong> compounding</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">$31,000</div>
+                <div class="stat-label">$10k @ 7% · 30 yrs<br/><strong>simple</strong> interest</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">2.5×</div>
+                <div class="stat-label">More money from compounding over 30 years</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. The formula — CLOSED -->
+      <div class="ed-item">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">🧮</span>
+            <div>
+              <div class="ed-trigger-text">The compound interest formula</div>
+              <div class="ed-trigger-sub">A = P(1 + r/n)^nt explained</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <div class="formula-block">
+              <div class="formula-main">A = P(1 + r/n)<sup>nt</sup></div>
+              <div class="formula-legend">
+                <div class="formula-item"><span class="formula-var">A</span> = Final amount</div>
+                <div class="formula-item"><span class="formula-var">P</span> = Principal</div>
+                <div class="formula-item"><span class="formula-var">r</span> = Annual rate (decimal)</div>
+                <div class="formula-item"><span class="formula-var">n</span> = Times compounded/year</div>
+                <div class="formula-item"><span class="formula-var">t</span> = Time in years</div>
+              </div>
+            </div>
+            <p>Here's how compounding frequency affects $10,000 at 7% over 10 years:</p>
+            <div style="overflow-x:auto;">
+              <table class="ed-table">
+                <thead><tr><th>Frequency</th><th>Times/yr</th><th>Balance</th><th>Interest</th></tr></thead>
+                <tbody>
+                  <tr><td>Annually</td><td>1×</td><td>$19,672</td><td>$9,672</td></tr>
+                  <tr><td>Quarterly</td><td>4×</td><td>$19,990</td><td>$9,990</td></tr>
+                  <tr><td>Monthly</td><td>12×</td><td>$20,097</td><td>$10,097</td></tr>
+                  <tr><td>Daily</td><td>365×</td><td class="highlight">$20,136</td><td class="highlight">$10,136</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Compound vs Simple — CLOSED -->
+      <div class="ed-item">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">⚖️</span>
+            <div>
+              <div class="ed-trigger-text">Compound vs. simple interest</div>
+              <div class="ed-trigger-sub">Side-by-side comparison over 30 years</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <p>Simple interest only earns on your original principal. Compound interest earns on your principal <em>plus</em> all accumulated interest. The gap widens dramatically over time.</p>
+            <div style="overflow-x:auto;">
+              <table class="ed-table">
+                <thead><tr><th>Year</th><th>Simple ($10k @ 7%)</th><th>Compound ($10k @ 7%)</th><th>Difference</th></tr></thead>
+                <tbody>
+                  <tr><td>5</td><td>$13,500</td><td>$14,026</td><td class="highlight">+$526</td></tr>
+                  <tr><td>10</td><td>$17,000</td><td>$19,672</td><td class="highlight">+$2,672</td></tr>
+                  <tr><td>20</td><td>$24,000</td><td>$38,697</td><td class="highlight">+$14,697</td></tr>
+                  <tr><td>30</td><td>$31,000</td><td>$76,123</td><td class="highlight">+$45,123</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ed-callout">
+              <strong>Key takeaway:</strong> The longer your time horizon, the more dramatic the gap. Starting early — even with small amounts — beats investing larger amounts later.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. How to use — CLOSED -->
+      <div class="ed-item">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">🛠️</span>
+            <div>
+              <div class="ed-trigger-text">How to use this calculator</div>
+              <div class="ed-trigger-sub">5 steps to model your growth</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <ol class="steps-list">
+              <li class="step-item">
+                <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+                <div class="step-content">
+                  <div class="step-title">Enter your initial investment</div>
+                  <div class="step-text">The lump sum you're starting with today. Even $500 shows real impact.</div>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+                <div class="step-content">
+                  <div class="step-title">Set your expected rate of return</div>
+                  <div class="step-text">The S&P 500 has averaged ~10%/yr before inflation (~7% after). Use 6–8% for a conservative estimate.</div>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-left"><div class="step-num">3</div><div class="step-line"></div></div>
+                <div class="step-content">
+                  <div class="step-title">Add a regular contribution</div>
+                  <div class="step-text">Consistent contributions often matter more than your starting amount.</div>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-left"><div class="step-num">4</div><div class="step-line"></div></div>
+                <div class="step-content">
+                  <div class="step-title">Choose your time horizon</div>
+                  <div class="step-text">Try 10 vs. 30 years — the last decade often accounts for more than half of total growth.</div>
+                </div>
+              </li>
+              <li class="step-item">
+                <div class="step-left"><div class="step-num">5</div><div class="step-line"></div></div>
+                <div class="step-content">
+                  <div class="step-title">Compare scenarios</div>
+                  <div class="step-text">Use "+ Add comparison" to run side-by-side projections — great for "now vs. 5 years later."</div>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Tips — CLOSED -->
+      <div class="ed-item">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">💡</span>
+            <div>
+              <div class="ed-trigger-text">5 tips to grow your money faster</div>
+              <div class="ed-trigger-sub">Start early, minimize fees, and more</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <ul class="tips-list">
+              <li>
+                <div class="tip-icon">⏰</div>
+                <div>
+                  <div class="tip-title">Start as early as possible</div>
+                  <div class="tip-text">Investing $5k/yr from ages 25–35 then stopping often beats investing $5k/yr from 35–65. Time is your greatest asset.</div>
+                </div>
+              </li>
+              <li>
+                <div class="tip-icon">🔄</div>
+                <div>
+                  <div class="tip-title">Reinvest dividends automatically</div>
+                  <div class="tip-text">Enable DRIP at your brokerage so dividends automatically buy more shares — zero extra effort.</div>
+                </div>
+              </li>
+              <li>
+                <div class="tip-icon">📈</div>
+                <div>
+                  <div class="tip-title">Increase contributions over time</div>
+                  <div class="tip-text">Even a 1% annual raise to your contribution has an outsized impact over decades.</div>
+                </div>
+              </li>
+              <li>
+                <div class="tip-icon">🛡️</div>
+                <div>
+                  <div class="tip-title">Use tax-advantaged accounts</div>
+                  <div class="tip-text">A Roth IRA or 401(k) shields your growth from tax drag. Roth qualified withdrawals are completely tax-free.</div>
+                </div>
+              </li>
+              <li>
+                <div class="tip-icon">💸</div>
+                <div>
+                  <div class="tip-title">Minimize fees relentlessly</div>
+                  <div class="tip-text">A 1% fee on $500k can cost $150,000+ in lost compounding over 20 years. Use index funds under 0.10% expense ratio.</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. FAQ — CLOSED -->
+      <div class="ed-item">
+        <button class="ed-trigger" onclick="toggleSection(this)">
+          <div class="ed-trigger-left">
+            <span class="ed-trigger-icon">❓</span>
+            <div>
+              <div class="ed-trigger-text">Frequently asked questions</div>
+              <div class="ed-trigger-sub">Rates, inflation, APR vs APY, and more</div>
+            </div>
+          </div>
+          <svg class="ed-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="ed-body">
+          <div class="ed-body-inner">
+            <div class="faq-list">
+              <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                  What's a realistic rate of return?
+                  <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">For a diversified stock portfolio, the historical average is ~10%/yr before inflation (~7% after). For a conservative stock/bond mix, 5–6% is reasonable. High-yield savings accounts currently offer 4–5%, but fluctuate with the federal funds rate.</div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                  How often does interest compound in real accounts?
+                  <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">Most high-yield savings accounts compound daily and credit monthly. Brokerage accounts don't compound directly — stock appreciation and reinvested dividends create the effect. CDs typically compound daily or monthly.</div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                  Does this calculator account for inflation?
+                  <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">No — it shows nominal returns. To see inflation-adjusted results, subtract your expected inflation rate from your rate of return before entering it. E.g., 8% returns − 3% inflation = enter 5%.</div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                  What's the difference between APR and APY?
+                  <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">APR is the simple rate without compounding. APY reflects the actual return after compounding. A 5% APR compounding daily has an APY of ~5.13%. Always compare APY to APY when evaluating savings products.</div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                  Is compound interest always a good thing?
+                  <svg class="faq-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer"><div class="faq-answer-inner">When investing, yes. When borrowing, it works against you. Credit card debt compounds daily at 20–30%. Pay off high-interest debt first — eliminating 20% debt is a guaranteed 20% return.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ed-accordion -->
+  </div><!-- /editorial -->
+</div><!-- /content-wrapper -->
+
+<hr class="section-divider" />
+
+<!-- CALCULATOR -->
 <main class="page">
   <div class="layout">
+    <div id="inputsWrapper" class="inputs-wrapper">
+      <div class="container">
+        <h1 style="text-align: left;">Investment Details</h1>
 
-    <!-- INPUTS -->
-<div id="inputsWrapper" class="inputs-wrapper">
+        <label class="input-label">Initial Investment</label>
+        <div class="money-inline">
+          <span class="money-prefix">$</span>
+          <input type="text" inputmode="numeric" id="principal" value="2000" />
+        </div>
 
-    <div class="container">
-      
-      <h1 style="text-align: left;">Investment Details</h1>
-  
-<label class="input-label">Initial Investment</label>
-<div class="money-inline">
-  <span class="money-prefix">$</span>
-  <input
-    type="text"
-    inputmode="numeric"
-    id="principal"
-    value="2000"
-  />
-</div>
+        <label class="input-label">Annual Interest Rate (%)</label>
+        <input type="number" id="rate" value="7" min="0.01" max="50" step="0.01" />
 
-      <label class="input-label">Annual Interest Rate (%)</label>
-      <input type="number" id="rate" value="7" min="0.01" max="50" step="0.01" />
+        <label class="input-label">Years</label>
+        <input type="number" id="years" value="15" min="1" max="100" step="1" />
 
-      <label class="input-label">Years</label>
-      <input type="number" id="years" value="15" min="1" max="100" step="1" />
+        <div class="inline-label">
+          <span>Contribution ·</span>
+          <select id="contributionFreq" class="inline-select">
+            <option value="daily">Daily</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <div class="money-inline">
+          <span class="money-prefix">$</span>
+          <input type="text" inputmode="numeric" id="contributions" value="50" placeholder="0" />
+        </div>
 
-      <!-- CONTRIBUTION -->
-<div class="inline-label">
-  <span>Contribution ·</span>
-  <select id="contributionFreq" class="inline-select">
-    <option value="daily">Daily</option>
-    <option value="monthly" selected>Monthly</option>
-    <option value="yearly">Yearly</option>
-  </select>
-</div>
+        <div class="inline-label">
+          <span>Compound Frequency ·</span>
+          <select id="compoundFreq" class="inline-select">
+            <option value="365">Daily</option>
+            <option value="12" selected>Monthly</option>
+            <option value="1">Yearly</option>
+          </select>
+        </div>
 
-<div class="money-inline">
-  <span class="money-prefix">$</span>
-  <input
-    type="text"
-    inputmode="numeric"
-    id="contributions"
-    value="50"
-    placeholder="0"
-  />
-</div>
-
-
-
-
-
-      <!-- COMPOUND FREQUENCY -->
-<div class="inline-label">
-  <span>Compound Frequency ·</span>
-  <select id="compoundFreq" class="inline-select">
-    <option value="365">Daily</option>
-    <option value="12" selected>Monthly</option>
-    <option value="1">Yearly</option>
-  </select>
-</div>
-<div>
-<div class="scenario-row">
-  <div class="scenario-switcher">
-    <span id="prevScenario" class="scenario-arrow">‹</span>
-
-    <span class="scenario-label">
-      <span></span>
-       <strong id="scenarioIndex"></strong>
-      <span class="scenario-total"></span>
-      <div>
-
-  </div>
-  
-<div class="scenario-add-row">
-  <span id="addScenario" class="scenario-add">
-    + Add comparison
-  </span>
-</div>
-
-
-  </div>
-
-    <span id="nextScenario" class="scenario-arrow">›</span>
-  </div>
-  
-
-
-</div>
-
-
+        <div>
+          <div class="scenario-row">
+            <div class="scenario-switcher">
+              <span id="prevScenario" class="scenario-arrow">‹</span>
+              <span class="scenario-label">
+                <span></span>
+                <strong id="scenarioIndex"></strong>
+                <span class="scenario-total"></span>
+                <div>
+                  <div class="scenario-add-row">
+                    <span id="addScenario" class="scenario-add">+ Add comparison</span>
+                  </div>
+                </div>
+              </span>
+              <span id="nextScenario" class="scenario-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-</div>
-
-    <!-- CHART -->
     <div class="chart">
-          <div class="card chart-card">
-<div class="chart-menu">
-  <button id="chartMenuBtn">☰</button>
-  <div id="chartMenu" class="chart-menu-dropdown">
-    <button onclick="exportChart('print')">Print</button>
-    <button onclick="exportChart('pdf')">Download PDF</button>
-  </div>
-</div>
-
-      <div id="scenarioIndicator" class="scenario-indicator hidden">
-<span class="scenario-arrow prev">‹</span>
-
-  <span class="scenario-dot"></span>
-  <span class="scenario-text"></span>
-<span class="scenario-arrow next">›</span>
-
-</div>
-
-
-
-
-      <div class="chart-total" id="chartTotal">Enter data to start</div>
-      <canvas id="growthChart"></canvas>
-
-  </div>
+      <div class="card chart-card">
+        <div class="chart-menu">
+          <button id="chartMenuBtn">☰</button>
+          <div id="chartMenu" class="chart-menu-dropdown">
+            <button onclick="exportChart('print')">Print</button>
+            <button onclick="exportChart('pdf')">Download PDF</button>
+          </div>
+        </div>
+        <div id="scenarioIndicator" class="scenario-indicator hidden">
+          <span class="scenario-arrow prev">‹</span>
+          <span class="scenario-dot"></span>
+          <span class="scenario-text"></span>
+          <span class="scenario-arrow next">›</span>
+        </div>
+        <div class="chart-total" id="chartTotal">Enter data to start</div>
+        <canvas id="growthChart"></canvas>
+      </div>
     </div>
+  </div>
+</main>
+
+<hr class="section-divider" />
+
+<!-- ════════════════════════════════════════
+     AFFILIATE SECTION
+════════════════════════════════════════ -->
+<div class="content-wrapper">
+  <section class="affiliate-section" aria-label="Recommended brokers">
+
+    <div class="affiliate-header">
+      <h2>Ready to put your numbers to work? <em>Start investing today.</em></h2>
+    </div>
+    <p class="affiliate-subtext">
+      Brokers we've vetted and recommend. We may earn a commission if you open an account — at no cost to you. <a href="#">Advertiser disclosure ›</a>
+    </p>
+
+    <div class="broker-grid">
+      <div class="broker-card">
+        <span class="broker-badge green">Best overall</span>
+        <div class="broker-identity">
+          <div class="broker-logo logo-green">F</div>
+          <div><div class="broker-name">Fidelity</div><div class="broker-tagline">Full-service investing</div></div>
+        </div>
+        <div class="broker-rating"><span class="stars">★★★★★</span> 4.9 <span class="rating-count">(12,400 reviews)</span></div>
+        <ul class="broker-perks">
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>$0 commissions on stocks & ETFs</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Fractional shares from $1</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>No account minimums</li>
+        </ul>
+        <div class="broker-bonus"><strong>🎁 Bonus:</strong> Get $100 when you fund with $50+</div>
+        <a href="#" class="broker-cta cta-green">Open a Fidelity Account →</a>
+        <div class="broker-disclaimer">Sponsored · Terms apply</div>
+      </div>
+
+      <div class="broker-card">
+        <span class="broker-badge blue">Best for beginners</span>
+        <div class="broker-identity">
+          <div class="broker-logo logo-blue">R</div>
+          <div><div class="broker-name">Robinhood</div><div class="broker-tagline">Simple, mobile-first</div></div>
+        </div>
+        <div class="broker-rating"><span class="stars">★★★★☆</span> 4.4 <span class="rating-count">(9,800 reviews)</span></div>
+        <ul class="broker-perks">
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant deposits up to $1,000</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Crypto & options trading</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>IRA with 3% match (Gold)</li>
+        </ul>
+        <div class="broker-bonus"><strong>🎁 Bonus:</strong> 1 free stock up to $200</div>
+        <a href="#" class="broker-cta cta-blue">Claim Your Free Stock →</a>
+        <div class="broker-disclaimer">Sponsored · Terms apply</div>
+      </div>
+
+      <div class="broker-card">
+        <span class="broker-badge amber">Best for active traders</span>
+        <div class="broker-identity">
+          <div class="broker-logo logo-orange">T</div>
+          <div><div class="broker-name">Tastytrade</div><div class="broker-tagline">Built for options traders</div></div>
+        </div>
+        <div class="broker-rating"><span class="stars">★★★★★</span> 4.7 <span class="rating-count">(5,200 reviews)</span></div>
+        <ul class="broker-perks">
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>$0 stock commissions</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>$1 to open, $0 to close options</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Advanced charting & analytics</li>
+        </ul>
+        <div class="broker-bonus"><strong>🎁 Bonus:</strong> Up to $500 on asset transfer</div>
+        <a href="#" class="broker-cta cta-orange">Start Trading Options →</a>
+        <div class="broker-disclaimer">Sponsored · Terms apply</div>
+      </div>
+
+      <div class="broker-card">
+        <span class="broker-badge purple">Best for long-term</span>
+        <div class="broker-identity">
+          <div class="broker-logo logo-purple">V</div>
+          <div><div class="broker-name">Vanguard</div><div class="broker-tagline">Index funds & retirement</div></div>
+        </div>
+        <div class="broker-rating"><span class="stars">★★★★☆</span> 4.5 <span class="rating-count">(7,100 reviews)</span></div>
+        <ul class="broker-perks">
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Industry-lowest expense ratios</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>401k rollovers made simple</li>
+          <li><span class="perk-check"><svg width="8" height="8" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Investor-owned structure</li>
+        </ul>
+        <div class="broker-bonus"><strong>🎁 Bonus:</strong> $0 commissions on Vanguard ETFs</div>
+        <a href="#" class="broker-cta cta-purple">Open a Vanguard Account →</a>
+        <div class="broker-disclaimer">Sponsored · Terms apply</div>
+      </div>
+    </div>
+
+    <div class="compare-wrap">
+      <h3>Side-by-side comparison</h3>
+      <div class="table-scroll">
+        <table class="compare-table">
+          <thead>
+            <tr><th>Broker</th><th>Commission</th><th>Fractional</th><th>IRA</th><th>Min.</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="broker-col">Fidelity</td><td>$0</td><td><span class="pill-yes">✓ Yes</span></td><td><span class="pill-yes">✓ Yes</span></td><td>$0</td><td><a href="#" class="table-cta">Open →</a></td></tr>
+            <tr><td class="broker-col">Robinhood</td><td>$0</td><td><span class="pill-yes">✓ Yes</span></td><td><span class="pill-yes">✓ Yes</span></td><td>$0</td><td><a href="#" class="table-cta">Open →</a></td></tr>
+            <tr><td class="broker-col">Tastytrade</td><td>$0</td><td><span class="pill-no">— No</span></td><td><span class="pill-yes">✓ Yes</span></td><td>$0</td><td><a href="#" class="table-cta">Open →</a></td></tr>
+            <tr><td class="broker-col">Vanguard</td><td>$0</td><td><span class="pill-yes">✓ Yes</span></td><td><span class="pill-yes">✓ Yes</span></td><td>$0</td><td><a href="#" class="table-cta">Open →</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="affiliate-fine-print">
+      <strong>Advertiser Disclosure:</strong> Yieldora may receive compensation when you click on links to financial products on this site. This does not affect our editorial integrity or calculator accuracy. All bonus offers subject to broker terms and conditions. Rates current as of February 2026.
+    </div>
+
+  </section>
 </div>
 
-  
-
-</main>
+<!-- Auth modal -->
 <div id="auth-overlay" class="auth-overlay hidden">
   <div class="auth-modal" id="authModal">
     <h2>Save your scenario</h2>
     <p>Create a free account to save, compare, and export your projections.</p>
-
-    <input
-      type="email"
-      id="auth-email"
-      placeholder="Email address"
-      autocomplete="email"
-    />
-
+    <input type="email" id="auth-email" placeholder="Email address" autocomplete="email" />
     <button id="magic-link-btn">Send magic link</button>
-
     <span class="auth-close" aria-label="Close">×</span>
   </div>
 </div>
-
 
 <script src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script>
+  /* ── Main section accordion (ed-item) ── */
+  function toggleSection(btn) {
+    const item = btn.closest('.ed-item');
+    item.classList.toggle('open');
+  }
+
+  /* ── Inner FAQ accordion ── */
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    item.closest('.faq-list').querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
 
 </body>
 </html>
